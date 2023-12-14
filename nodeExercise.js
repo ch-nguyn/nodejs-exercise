@@ -15,11 +15,19 @@ const getUserWithMax = (prop, users) =>
 const getLotsOfData = async (params) => {
   try {
     const arrGetData = [];
-    params.map((param) => arrGetData.push(getData(param)));
+    params.forEach((param) => arrGetData.push(getData(param)));
     return await Promise.all(arrGetData);
   } catch (e) {
     console.log(e);
   }
+};
+
+const getPostWithCommentById = async (id) => {
+  const [post, comments] = await getLotsOfData([
+    `/posts/${id}`,
+    `/posts/${id}/comments`,
+  ]);
+  return [post, comments];
 };
 
 (async () => {
@@ -30,13 +38,14 @@ const getLotsOfData = async (params) => {
     // 3. Get all the posts and comments from the API. Map the data with the users array.
     const [posts, comments] = await getLotsOfData(["posts", "comments"]);
 
-    users.map((user) => {
+    const userData = users.map((user) => {
       user.posts = posts.filter((post) => post.userId === user.id);
       user.comments = comments.filter(
         (comment) => comment.email === user.email
       );
+      return user;
     });
-    console.log("3. ", users);
+    console.log("3. ", userData);
 
     // 4. Filter only users with more than 3 comments.
     const usersMoreThan3Cmts = [...users].filter(
@@ -68,10 +77,7 @@ const getLotsOfData = async (params) => {
 
     // 8. Get the post with ID of 1 via API request, at the same time get comments for post ID of 1 via another API request
 
-    const [post1, commentsOfPost1] = await getLotsOfData([
-      "/posts/1",
-      "/posts/1/comments",
-    ]);
+    const [post1, commentsOfPost1] = await getPostWithCommentById("1");
 
     const post = {
       ...post1,
