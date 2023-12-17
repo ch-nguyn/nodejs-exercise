@@ -55,11 +55,12 @@ const getPostWithCommentById = async (id) => {
 
     // 5. Reformat the data with the count of comments and posts
     const dataWithCount = [...users];
-    dataWithCount.map((user) => {
+    const result = dataWithCount.map((user) => {
       user.commentsCount = user.comments.length;
       user.postsCount = user.posts.length;
+      return user;
     });
-    console.log("5. ", dataWithCount);
+    console.log("5. ", result);
 
     //6. Who is the user with the most comments/posts?
     // 6.1. The user with the most comments
